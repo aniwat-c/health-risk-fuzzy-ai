@@ -9,29 +9,7 @@ st.set_page_config(page_title="AI Health Advisor Pro", layout="wide", page_icon=
 
 st.markdown("""
     <style>
-    /* 1. บังคับแถบเลื่อน (Slider) ให้เป็นสีแดงสด */
-    .stSlider [data-baseweb="slider"] > div > div > div > div {
-        background-color: #FF4B4B !important;
-    }
-    .stSlider [data-baseweb="slider"] > div > div > div > div > div {
-        background-color: #FF4B4B !important;
-    }
-
-    /* 2. แก้ไขตัวเลขบน Slider (Labels) ให้ขาวชัดเจน */
-    /* บังคับสีตัวเลขค่าที่เลือก (Current Value) */
-    .stSlider [data-testid="stTickBarMax"], 
-    .stSlider [data-testid="stTickBarMin"],
-    .stSlider [style*="color"] {
-        color: #FFFFFF !important;
-        opacity: 1 !important;
-    }
-    
-    /* เจาะจงตัวเลขที่แสดงค่าปัจจุบันข้างบน Slider */
-    div[data-testid="stMarkdownContainer"] > p > span {
-        color: #FFFFFF !important;
-    }
-
-    /* 3. จัดการกล่อง Metric (พื้นขาว ตัวหนังสือดำ) ให้คงเดิม */
+    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาวเสมอ */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
@@ -42,23 +20,20 @@ st.markdown("""
         border: 1px solid #eeeeee;
     }
     
-    /* 4. บังคับสีตัวหนังสือทั่วไป และหัวข้อให้เป็นสีขาว (เพื่อโหมด Dark) */
-    h1, h2, h3, h4, h5, p, label, .stSubheader { 
+    /* แก้ไขตรงนี้: ปรับสีหัวข้อให้เป็นสีขาว (หรือลบทิ้งเพื่อให้เปลี่ยนตาม Theme) */
+    h1, h2, h3, h4 { 
         color: #FFFFFF !important; 
     }
     
-    /* 5. ปรับแต่งปุ่มกด */
+    /* ปรับแต่งปุ่มให้ดูชัดขึ้น */
     .stButton>button {
-        background-color: #007bff !important;
-        color: white !important;
-        border-radius: 10px;
-        width: 100%;
-        border: none;
+        background-color: #007bff;
+        color: white;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. ส่วนของ AI Logic (คงเดิม) ---
+# --- 2. ส่วนของ AI Logic ---
 temp_range = np.arange(34, 43.1, 0.1)
 sleep_range = np.arange(0, 13, 1)
 stress_range = np.arange(0, 11, 1)
@@ -119,6 +94,7 @@ with col_display:
             m1.metric("ความเสี่ยงโดยรวม", f"{res_risk:.2f}%")
             m2.metric("สถานะสุขภาพ", status)
 
+            # --- ส่วนคำแนะนำระบบ (เหมือนรูปที่ 1) ---
             st.write("##### **คำแนะนำจากระบบ:**")
             if res_risk > 70:
                 st.error("🚨 **สถานะ: อันตราย**")
@@ -142,18 +118,13 @@ with col_display:
                 """)
 
             # กราฟ
+            st.write("#### 📉 กราฟสรุปผล (Inference Visualization)")
             fig, ax = plt.subplots(figsize=(10, 3.5))
-            # บังคับสีพื้นหลังกราฟให้เป็นสีเข้มเพื่อให้เข้ากับ Dark mode ในมือถือ
-            fig.patch.set_facecolor('#0E1117')
-            ax.set_facecolor('#0E1117')
-            ax.tick_params(colors='white')
-            ax.xaxis.label.set_color('white')
-            ax.yaxis.label.set_color('white')
-            
             ax.plot(risk_range, risk['low'].mf, 'g', label='Low')
             ax.plot(risk_range, risk['medium'].mf, 'y', label='Medium')
             ax.plot(risk_range, risk['high'].mf, 'r', label='High')
-            ax.axvline(x=res_risk, color='dodgerblue', linestyle='--', linewidth=2, label=f'Result ({res_risk:.1f}%)')
+            ax.axvline(x=res_risk, color='blue', linestyle='--', linewidth=2, label=f'Result ({res_risk:.1f}%)')
+            ax.fill_between(risk_range, 0, np.minimum(res_risk/100, risk['high'].mf if res_risk > 70 else risk['medium'].mf), color='blue', alpha=0.2)
             ax.legend()
             st.pyplot(fig)
 
@@ -172,8 +143,6 @@ with exp:
     deg_sleep_low = fuzz.interp_membership(sleep_range, sleep['low'].mf, in_sleep)
     deg_stress_high = fuzz.interp_membership(stress_range, stress['high'].mf, in_stress)
     
-    # ใช้ st.write เพื่อให้ Streamlit จัดการสีตัวหนังสือให้เหมาะสมกับพื้นหลังเอง
-    c1.write(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
-    c2.write(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
-    c3.write(f"ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**")
-
+    c1.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**</span>", unsafe_allow_html=True)
+    c2.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**</span>", unsafe_allow_html=True)
+    c3.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**</span>", unsafe_allow_html=True)
