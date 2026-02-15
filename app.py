@@ -19,18 +19,19 @@ st.markdown("""
         color: #FFFFFF !important; 
     }
 
-    /* 3. บังคับ Slider สีแดง + ตัวเลขสเกลสีขาวชัดเจน */
+    /* 3. บังคับ Slider สีแดง + แก้ไขตัวเลขให้ขึ้นสีขาวชัดเจน */
     .stSlider [data-baseweb="slider"] > div > div > div > div {
         background-color: #FF4B4B !important;
     }
     .stSlider [data-baseweb="slider"] > div > div > div > div > div {
         background-color: #FF4B4B !important;
     }
+    /* บังคับตัวเลขที่หัว Slider และตัวเลขสเกล Min/Max ให้เป็นสีขาว */
     .stSlider [data-testid="stTickBarMax"], 
     .stSlider [data-testid="stTickBarMin"],
-    .stSlider [style*="color"] {
+    .stSlider div[data-baseweb="typography"],
+    .stSlider div {
         color: #FFFFFF !important;
-        opacity: 1 !important;
     }
 
     /* 4. Metric พื้นขาว ตัวหนังสือดำ (ให้เด่น) */
@@ -62,7 +63,6 @@ st.markdown("""
     .analysis-text h5, .analysis-text p, .analysis-text li {
         color: #000000 !important;
     }
-    /* บังคับตัวหนังสือใน Alert (success/warning/error) ให้ดำสนิท */
     div[data-testid="stNotification"] p {
         color: #000000 !important;
     }
@@ -130,7 +130,6 @@ with col_display:
             m1.metric("ความเสี่ยงโดยรวม", f"{res_risk:.2f}%")
             m2.metric("สถานะสุขภาพ", status)
 
-            # --- เริ่มส่วนวิเคราะห์ (ตัวหนังสือดำ) ---
             st.markdown("<div class='analysis-text'>", unsafe_allow_html=True)
             st.write("##### **คำแนะนำจากระบบ:**") 
             
@@ -145,18 +144,36 @@ with col_display:
                 st.markdown("* รักษาสุขภาพที่ดีต่อไป\n* ออกกำลังกายอย่างสม่ำเสมอ")
             
             st.markdown("</div>", unsafe_allow_html=True)
-            # --- จบส่วนวิเคราะห์ ---
 
-            # กราฟ
-            fig, ax = plt.subplots(figsize=(10, 3.5))
-            fig.patch.set_facecolor('#0E1117')
-            ax.set_facecolor('#0E1117')
-            ax.tick_params(colors='white')
-            ax.plot(risk_range, risk['low'].mf, 'g', label='Low')
-            ax.plot(risk_range, risk['medium'].mf, 'y', label='Medium')
-            ax.plot(risk_range, risk['high'].mf, 'r', label='High')
-            ax.axvline(x=res_risk, color='dodgerblue', linestyle='--', linewidth=2, label=f'Result ({res_risk:.1f}%)')
-            ax.legend()
+            # --- แก้ไขส่วนกราฟให้พื้นหลังขาว ---
+            st.write("#### 📉 กราฟสรุปผล (Inference Visualization)")
+            fig, ax = plt.subplots(figsize=(10, 4))
+            
+            # ตั้งสีพื้นหลังกราฟเป็นสีขาว
+            fig.patch.set_facecolor('white')
+            ax.set_facecolor('white')
+            
+            # ปรับสีแกนและตัวอักษรเป็นสีดำเพื่อให้ชัดบนพื้นขาว
+            ax.tick_params(colors='black')
+            ax.xaxis.label.set_color('black')
+            ax.yaxis.label.set_color('black')
+            for spine in ax.spines.values():
+                spine.set_edgecolor('black')
+
+            # วาดกราฟ
+            ax.plot(risk_range, risk['low'].mf, 'g', linewidth=2, label='Low Risk')
+            ax.plot(risk_range, risk['medium'].mf, 'orange', linewidth=2, label='Medium Risk')
+            ax.plot(risk_range, risk['high'].mf, 'r', linewidth=2, label='High Risk')
+            
+            # เส้นระบุผลลัพธ์
+            ax.axvline(x=res_risk, color='blue', linestyle='--', linewidth=2.5, label=f'Result ({res_risk:.1f}%)')
+            
+            ax.set_title("Health Risk Level", color='black', fontsize=14)
+            ax.set_xlabel("Risk Percentage (%)", color='black')
+            ax.set_ylabel("Membership Degree", color='black')
+            ax.legend(loc='upper right', facecolor='white', edgecolor='black')
+            ax.grid(True, linestyle=':', alpha=0.6) # เพิ่ม Grid ให้ดูง่ายขึ้น
+            
             st.pyplot(fig)
 
         except Exception as e:
@@ -174,7 +191,6 @@ with exp:
     deg_sleep_low = fuzz.interp_membership(sleep_range, sleep['low'].mf, in_sleep)
     deg_stress_high = fuzz.interp_membership(stress_range, stress['high'].mf, in_stress)
     
-    # ส่วนนี้จะยังเป็นสีขาวเพื่อให้เข้ากับพื้นหลังสีเข้มของ Expander
     c1.markdown(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
     c2.markdown(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
     c3.markdown(f"ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**")
