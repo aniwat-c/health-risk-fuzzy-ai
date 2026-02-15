@@ -9,13 +9,12 @@ st.set_page_config(page_title="AI Health Advisor Pro", layout="wide", page_icon=
 
 st.markdown("""
     <style>
-    /* บังคับพื้นหลังของแอปทั้งหมดให้เป็นสีเข้ม */
+    /* บังคับพื้นหลังของแอปทั้งหมดให้เป็นสีมืด */
     .stApp {
-        background-color: #0E1117;
-        color: #FFFFFF;
+        background-color: #0E1117 !important;
     }
 
-    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาว (เพื่อให้เด่นเหมือนเดิม) */
+    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาว (เพื่อให้เด่นชัด) */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
@@ -26,21 +25,22 @@ st.markdown("""
         border: 1px solid #eeeeee;
     }
     
-    /* บังคับสีหัวข้อ (h1-h4) ให้เป็นสีขาวนวล */
-    h1, h2, h3, h4, h5, p, span { 
+    /* บังคับสีตัวหนังสือหัวข้อทั้งหมดให้เป็นสีขาวนวล */
+    h1, h2, h3, h4, h5, p, span, label { 
         color: #FAFAFA !important; 
     }
 
-    /* ปรับแต่ง Sidebar ให้เป็นสีเข้มด้วย */
-    [data-testid="stSidebar"] {
-        background-color: #262730;
+    /* ปรับแต่งปุ่มให้เป็นสีน้ำเงินเด่นชัด */
+    .stButton>button {
+        background-color: #007bff !important;
+        color: white !important;
+        border-radius: 10px;
+        width: 100%;
     }
     
-    /* ปรับแต่งปุ่ม */
-    .stButton>button {
-        background-color: #007bff;
-        color: white;
-        border-radius: 10px;
+    /* แก้ไขสีตัวหนังสือใน Slider ให้เห็นชัดบนพื้นมืด */
+    .stSlider label {
+        color: #FAFAFA !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -159,3 +159,4 @@ with exp:
     c2.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**</span>", unsafe_allow_html=True)
 
     c3.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**</span>", unsafe_allow_html=True)
+
