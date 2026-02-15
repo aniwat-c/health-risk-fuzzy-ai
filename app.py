@@ -14,8 +14,8 @@ st.markdown("""
         background-color: #0E1117 !important;
     }
 
-    /* 2. บังคับตัวหนังสือทั่วไปและหัวข้อให้เป็นสีขาว (เพื่อให้อ่านออกบนพื้นดำ) */
-    h1, h2, h3, h4, h5, p, label, span { 
+    /* 2. บังคับหัวข้อและข้อความทั่วไปให้เป็นสีขาว */
+    h1, h2, h3, h4, h5, label, span { 
         color: #FFFFFF !important; 
     }
 
@@ -26,7 +26,6 @@ st.markdown("""
     .stSlider [data-baseweb="slider"] > div > div > div > div > div {
         background-color: #FF4B4B !important;
     }
-    /* ตัวเลขบนสเกล Slider */
     .stSlider [data-testid="stTickBarMax"], 
     .stSlider [data-testid="stTickBarMin"],
     .stSlider [style*="color"] {
@@ -34,7 +33,7 @@ st.markdown("""
         opacity: 1 !important;
     }
 
-    /* 4. สไตล์ Metric (ตามที่คุณต้องการ: พื้นขาว ตัวหนังสือดำเสมอ) */
+    /* 4. สไตล์ Metric: พื้นขาว ตัวหนังสือดำเสมอ */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
@@ -45,7 +44,7 @@ st.markdown("""
         border: 1px solid #eeeeee;
     }
     
-    /* 5. สไตล์ปุ่ม (ตามที่คุณต้องการ: สีน้ำเงิน) */
+    /* 5. สไตล์ปุ่ม: สีน้ำเงิน */
     .stButton>button {
         background-color: #007bff !important;
         color: white !important;
@@ -54,9 +53,20 @@ st.markdown("""
         border: none;
     }
 
-    /* 6. ปรับสีพื้นหลังของกล่องใส่ข้อมูล (Slider Container) ให้ดูง่ายขึ้น */
+    /* 6. ปรับสีพื้นหลังของกล่องใส่ข้อมูล (Slider Container) */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background-color: #1A1C24 !important;
+    }
+
+    /* 7. *** ส่วนที่แก้ไข: บังคับข้อความคำแนะนำผลการวิเคราะห์ให้เป็นสีดำ *** */
+    /* ครอบคลุมส่วน st.write และ st.markdown ที่อยู่ในฝั่งแสดงผล */
+    .stAlert p, .stMarkdown p, li {
+        color: #000000 !important;
+    }
+    
+    /* บังคับสีใน Expander ให้กลับเป็นสีขาวเพื่อให้ยังอ่านออกบนพื้นเข้ม */
+    .stExpander p, .stExpander span {
+        color: #FFFFFF !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -174,4 +184,5 @@ with exp:
     c1.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**</span>", unsafe_allow_html=True)
     c2.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**</span>", unsafe_allow_html=True)
     c3.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**</span>", unsafe_allow_html=True)
+
 
