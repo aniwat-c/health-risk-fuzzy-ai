@@ -9,7 +9,7 @@ st.set_page_config(page_title="AI Health Advisor Pro", layout="wide", page_icon=
 
 st.markdown("""
     <style>
-    /* 1. บังคับแถบเลื่อน (Slider) ให้เป็นสีแดงสดเหมือนรูปต้นฉบับ */
+    /* 1. บังคับแถบเลื่อน (Slider) ให้เป็นสีแดงสด */
     .stSlider [data-baseweb="slider"] > div > div > div > div {
         background-color: #FF4B4B !important;
     }
@@ -17,7 +17,21 @@ st.markdown("""
         background-color: #FF4B4B !important;
     }
 
-    /* 2. จัดการกล่อง Metric ให้เด่น (พื้นขาว ตัวหนังสือดำ) */
+    /* 2. แก้ไขตัวเลขบน Slider (Labels) ให้ขาวชัดเจน */
+    /* บังคับสีตัวเลขค่าที่เลือก (Current Value) */
+    .stSlider [data-testid="stTickBarMax"], 
+    .stSlider [data-testid="stTickBarMin"],
+    .stSlider [style*="color"] {
+        color: #FFFFFF !important;
+        opacity: 1 !important;
+    }
+    
+    /* เจาะจงตัวเลขที่แสดงค่าปัจจุบันข้างบน Slider */
+    div[data-testid="stMarkdownContainer"] > p > span {
+        color: #FFFFFF !important;
+    }
+
+    /* 3. จัดการกล่อง Metric (พื้นขาว ตัวหนังสือดำ) ให้คงเดิม */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
@@ -28,23 +42,18 @@ st.markdown("""
         border: 1px solid #eeeeee;
     }
     
-    /* 3. ปรับสีตัวหนังสือให้สอดคล้องกับธีม (แก้ปัญหาตัวหนังสือหายในมือถือ) */
-    /* ใช้สีที่ปรับตามโหมดอัตโนมัติเพื่อให้มองเห็นชัดทุกสภาพแสง */
-    h1, h2, h3, h4, h5, p, span, label, li { 
-        color: inherit !important; 
+    /* 4. บังคับสีตัวหนังสือทั่วไป และหัวข้อให้เป็นสีขาว (เพื่อโหมด Dark) */
+    h1, h2, h3, h4, h5, p, label, .stSubheader { 
+        color: #FFFFFF !important; 
     }
     
-    /* 4. ปรับแต่งปุ่มกด */
+    /* 5. ปรับแต่งปุ่มกด */
     .stButton>button {
         background-color: #007bff !important;
         color: white !important;
         border-radius: 10px;
         width: 100%;
-    }
-    
-    /* 5. ปรับสีใน Expander (ส่วนวิเคราะห์เชิงลึก) ให้เห็นชัด */
-    .stExpander p {
-        color: inherit !important;
+        border: none;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -167,3 +176,4 @@ with exp:
     c1.write(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
     c2.write(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
     c3.write(f"ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**")
+
