@@ -4,36 +4,72 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 import matplotlib.pyplot as plt
 
-# --- 1. การตั้งค่าหน้าเว็บและสไตล์ ---
+# --- 1. การตั้งค่าหน้าเว็บและสไตล์ CSS แบบ Dark Mode ถาวร ---
 st.set_page_config(page_title="AI Health Advisor Pro", layout="wide", page_icon="🏥")
 
 st.markdown("""
     <style>
-    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาวเสมอ */
+    /* 1. บังคับพื้นหลังแอปดำถาวร */
+    .stApp {
+        background-color: #0E1117 !important;
+    }
+
+    /* 2. หัวข้อหลักและ Label ทั่วไปเป็นสีขาว */
+    h1, h2, h3, h4, label, span { 
+        color: #FFFFFF !important; 
+    }
+
+    /* 3. บังคับ Slider สีแดง + ตัวเลขสเกลสีขาวชัดเจน */
+    .stSlider [data-baseweb="slider"] > div > div > div > div {
+        background-color: #FF4B4B !important;
+    }
+    .stSlider [data-baseweb="slider"] > div > div > div > div > div {
+        background-color: #FF4B4B !important;
+    }
+    .stSlider [data-testid="stTickBarMax"], 
+    .stSlider [data-testid="stTickBarMin"],
+    .stSlider [style*="color"] {
+        color: #FFFFFF !important;
+        opacity: 1 !important;
+    }
+
+    /* 4. Metric พื้นขาว ตัวหนังสือดำ (ให้เด่น) */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
         background-color: #ffffff !important;
         padding: 20px;
         border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         border: 1px solid #eeeeee;
     }
     
-    /* แก้ไขตรงนี้: ปรับสีหัวข้อให้เป็นสีขาว (หรือลบทิ้งเพื่อให้เปลี่ยนตาม Theme) */
-    h1, h2, h3, h4 { 
-        color: #FFFFFF !important; 
-    }
-    
-    /* ปรับแต่งปุ่มให้ดูชัดขึ้น */
+    /* 5. ปุ่มสีน้ำเงิน */
     .stButton>button {
-        background-color: #007bff;
-        color: white;
+        background-color: #007bff !important;
+        color: white !important;
+        border-radius: 10px;
+        width: 100%;
+        border: none;
+    }
+
+    /* 6. กล่อง Input (Container) */
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #1A1C24 !important;
+    }
+
+    /* 7. บังคับส่วน "คำแนะนำ" และกล่องสถานะให้เป็นตัวหนังสือสีดำ */
+    .analysis-text h5, .analysis-text p, .analysis-text li {
+        color: #000000 !important;
+    }
+    /* บังคับตัวหนังสือใน Alert (success/warning/error) ให้ดำสนิท */
+    div[data-testid="stNotification"] p {
+        color: #000000 !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. ส่วนของ AI Logic ---
+# --- 2. ส่วนของ AI Logic (Fuzzy Logic) ---
 temp_range = np.arange(34, 43.1, 0.1)
 sleep_range = np.arange(0, 13, 1)
 stress_range = np.arange(0, 11, 1)
@@ -94,46 +130,41 @@ with col_display:
             m1.metric("ความเสี่ยงโดยรวม", f"{res_risk:.2f}%")
             m2.metric("สถานะสุขภาพ", status)
 
-            # --- ส่วนคำแนะนำระบบ (เหมือนรูปที่ 1) ---
-            st.write("##### **คำแนะนำจากระบบ:**")
+            # --- เริ่มส่วนวิเคราะห์ (ตัวหนังสือดำ) ---
+            st.markdown("<div class='analysis-text'>", unsafe_allow_html=True)
+            st.write("##### **คำแนะนำจากระบบ:**") 
+            
             if res_risk > 70:
                 st.error("🚨 **สถานะ: อันตราย**")
-                st.markdown("""
-                * ดื่มน้ำมากๆ และทานยาลดไข้
-                * ควรหาเวลางีบพักผ่อนให้เพียงพอ
-                * **โปรดพบแพทย์ทันที** หากอาการไม่ดีขึ้นใน 24 ชั่วโมง
-                """)
+                st.markdown("* ดื่มน้ำมากๆ และทานยาลดไข้\n* ควรพักผ่อนให้เพียงพอ\n* **โปรดพบแพทย์ทันที**")
             elif res_risk > 40:
                 st.warning("⚠️ **สถานะ: ควรระวัง**")
-                st.markdown("""
-                * ควรลดภาระงานเพื่อลดความเครียดสะสม
-                * พยายามนอนหลับให้ครบ 7-8 ชั่วโมง
-                * สังเกตอาการอย่างใกล้ชิด
-                """)
+                st.markdown("* ควรลดภาระงาน\n* พยายามนอนหลับให้ครบ 7-8 ชั่วโมง")
             else:
                 st.success("✅ **สถานะ: ปลอดภัย**")
-                st.markdown("""
-                * รักษาสุขภาพและพฤติกรรมที่ดีต่อไป
-                * ออกกำลังกายอย่างสม่ำเสมอ
-                """)
+                st.markdown("* รักษาสุขภาพที่ดีต่อไป\n* ออกกำลังกายอย่างสม่ำเสมอ")
+            
+            st.markdown("</div>", unsafe_allow_html=True)
+            # --- จบส่วนวิเคราะห์ ---
 
             # กราฟ
-            st.write("#### 📉 กราฟสรุปผล (Inference Visualization)")
             fig, ax = plt.subplots(figsize=(10, 3.5))
+            fig.patch.set_facecolor('#0E1117')
+            ax.set_facecolor('#0E1117')
+            ax.tick_params(colors='white')
             ax.plot(risk_range, risk['low'].mf, 'g', label='Low')
             ax.plot(risk_range, risk['medium'].mf, 'y', label='Medium')
             ax.plot(risk_range, risk['high'].mf, 'r', label='High')
-            ax.axvline(x=res_risk, color='blue', linestyle='--', linewidth=2, label=f'Result ({res_risk:.1f}%)')
-            ax.fill_between(risk_range, 0, np.minimum(res_risk/100, risk['high'].mf if res_risk > 70 else risk['medium'].mf), color='blue', alpha=0.2)
+            ax.axvline(x=res_risk, color='dodgerblue', linestyle='--', linewidth=2, label=f'Result ({res_risk:.1f}%)')
             ax.legend()
             st.pyplot(fig)
 
         except Exception as e:
-            st.error("ไม่สามารถคำนวณได้: ข้อมูลไม่เข้าเงื่อนไขของกฎ")
+            st.error("ไม่สามารถคำนวณได้")
     else:
         st.info("กรุณาป้อนข้อมูลเพื่อเริ่มการวิเคราะห์")
 
-# --- 4. ส่วนวิเคราะห์เชิงลึก (Membership Analysis) ---
+# --- 4. ส่วนวิเคราะห์เชิงลึก ---
 st.divider()
 exp = st.expander("🛠️ ดูเบื้องหลังการทำงาน (Membership Degree Analysis)")
 with exp:
@@ -143,6 +174,7 @@ with exp:
     deg_sleep_low = fuzz.interp_membership(sleep_range, sleep['low'].mf, in_sleep)
     deg_stress_high = fuzz.interp_membership(stress_range, stress['high'].mf, in_stress)
     
-    c1.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**</span>", unsafe_allow_html=True)
-    c2.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**</span>", unsafe_allow_html=True)
-    c3.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**</span>", unsafe_allow_html=True)
+    # ส่วนนี้จะยังเป็นสีขาวเพื่อให้เข้ากับพื้นหลังสีเข้มของ Expander
+    c1.markdown(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
+    c2.markdown(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
+    c3.markdown(f"ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**")
