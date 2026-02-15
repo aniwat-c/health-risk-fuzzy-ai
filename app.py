@@ -19,12 +19,18 @@ st.markdown("""
         color: #FFFFFF !important; 
     }
 
-    /* 3. บังคับ Slider สีแดง + แก้ไขตัวเลขให้ขึ้นสีขาวชัดเจน */
+    /* 3. บังคับ Slider สีแดง + ตัวเลขขาว + ลบกรอบสีแดงเวลาคลิก */
     .stSlider [data-baseweb="slider"] > div > div > div > div {
         background-color: #FF4B4B !important;
     }
     .stSlider [data-baseweb="slider"] > div > div > div > div > div {
         background-color: #FF4B4B !important;
+    }
+    /* ลบกรอบสีแดง (Focus Ring) ออก */
+    .stSlider [data-baseweb="slider"] > div:focus,
+    .stSlider [data-baseweb="slider"] [role="slider"]:focus {
+        outline: none !important;
+        box-shadow: none !important;
     }
     /* บังคับตัวเลขที่หัว Slider และตัวเลขสเกล Min/Max ให้เป็นสีขาว */
     .stSlider [data-testid="stTickBarMax"], 
@@ -145,34 +151,29 @@ with col_display:
             
             st.markdown("</div>", unsafe_allow_html=True)
 
-            # --- แก้ไขส่วนกราฟให้พื้นหลังขาว ---
+            # --- กราฟสรุปผล ---
             st.write("#### 📉 กราฟสรุปผล (Inference Visualization)")
             fig, ax = plt.subplots(figsize=(10, 4))
-            
-            # ตั้งสีพื้นหลังกราฟเป็นสีขาว
             fig.patch.set_facecolor('white')
             ax.set_facecolor('white')
             
-            # ปรับสีแกนและตัวอักษรเป็นสีดำเพื่อให้ชัดบนพื้นขาว
             ax.tick_params(colors='black')
             ax.xaxis.label.set_color('black')
             ax.yaxis.label.set_color('black')
             for spine in ax.spines.values():
                 spine.set_edgecolor('black')
 
-            # วาดกราฟ
             ax.plot(risk_range, risk['low'].mf, 'g', linewidth=2, label='Low Risk')
             ax.plot(risk_range, risk['medium'].mf, 'orange', linewidth=2, label='Medium Risk')
             ax.plot(risk_range, risk['high'].mf, 'r', linewidth=2, label='High Risk')
             
-            # เส้นระบุผลลัพธ์
             ax.axvline(x=res_risk, color='blue', linestyle='--', linewidth=2.5, label=f'Result ({res_risk:.1f}%)')
             
             ax.set_title("Health Risk Level", color='black', fontsize=14)
             ax.set_xlabel("Risk Percentage (%)", color='black')
             ax.set_ylabel("Membership Degree", color='black')
             ax.legend(loc='upper right', facecolor='white', edgecolor='black')
-            ax.grid(True, linestyle=':', alpha=0.6) # เพิ่ม Grid ให้ดูง่ายขึ้น
+            ax.grid(True, linestyle=':', alpha=0.6)
             
             st.pyplot(fig)
 
@@ -189,7 +190,7 @@ with exp:
     c1, c2, c3 = st.columns(3)
     deg_fever = fuzz.interp_membership(temp_range, temp['fever'].mf, in_temp)
     deg_sleep_low = fuzz.interp_membership(sleep_range, sleep['low'].mf, in_sleep)
-    deg_stress_high = fuzz.interp_membership(stress_range, stress['high'].mf, in_stress)
+    deg_stress_high = fuzz.interp_membership(stress_level.universe if 'stress_level' in locals() else stress_range, stress['high'].mf, in_stress)
     
     c1.markdown(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
     c2.markdown(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
