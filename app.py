@@ -9,16 +9,7 @@ st.set_page_config(page_title="AI Health Advisor Pro", layout="wide", page_icon=
 
 st.markdown("""
     <style>
-    /* 1. บังคับสีแถบ Slider ให้เป็นสีแดง (เหมือนรูปที่ 1) */
-    .stSlider [data-baseweb="slider"] > div > div > div > div {
-        background-color: #FF4B4B !important;
-    }
-    /* สีของปุ่มวงกลมบน Slider */
-    .stSlider [data-baseweb="slider"] > div > div > div > div > div {
-        background-color: #FF4B4B !important;
-    }
-
-    /* 2. บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาว (สวยและเด่น) */
+    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาวเสมอ */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
@@ -29,18 +20,15 @@ st.markdown("""
         border: 1px solid #eeeeee;
     }
     
-    /* 3. ปรับแต่งปุ่มกดให้เป็นสีน้ำเงินเด่นชัด */
-    .stButton>button {
-        background-color: #007bff !important;
-        color: white !important;
-        border-radius: 10px;
-        width: 100%;
-        border: none;
+    /* แก้ไขตรงนี้: ปรับสีหัวข้อให้เป็นสีขาว (หรือลบทิ้งเพื่อให้เปลี่ยนตาม Theme) */
+    h1, h2, h3, h4 { 
+        color: #FFFFFF !important; 
     }
     
-    /* 4. จัดการสีตัวหนังสือให้ขาวอัตโนมัติใน Dark Mode */
-    h1, h2, h3, h4, h5, p, span, label { 
-        color: #FAFAFA !important; 
+    /* ปรับแต่งปุ่มให้ดูชัดขึ้น */
+    .stButton>button {
+        background-color: #007bff;
+        color: white;
     }
     </style>
     """, unsafe_allow_html=True)
