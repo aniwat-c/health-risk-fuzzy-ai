@@ -19,20 +19,34 @@ st.markdown("""
         color: #FFFFFF !important; 
     }
 
-    /* 3. บังคับ Slider สีแดง + ตัวเลขขาว + ลบกรอบสีแดงเวลาคลิก */
+    /* 3. จัดการ Slider (ลบกรอบสีแดงและติ่ง Tooltip ออกทั้งหมด) */
+    
+    /* บังคับสีของแถบ Slider หลัก */
     .stSlider [data-baseweb="slider"] > div > div > div > div {
         background-color: #FF4B4B !important;
     }
-    .stSlider [data-baseweb="slider"] > div > div > div > div > div {
-        background-color: #FF4B4B !important;
-    }
-    /* ลบกรอบสีแดง (Focus Ring) ออก */
+
+    /* ลบกรอบสีแดง (Focus Ring) และเงาเวลาคลิกหรือเลื่อน */
     .stSlider [data-baseweb="slider"] > div:focus,
-    .stSlider [data-baseweb="slider"] [role="slider"]:focus {
+    .stSlider [role="slider"]:focus,
+    .stSlider [role="slider"]:active {
         outline: none !important;
         box-shadow: none !important;
     }
-    /* บังคับตัวเลขที่หัว Slider และตัวเลขสเกล Min/Max ให้เป็นสีขาว */
+
+    /* ซ่อนติ่งสี่เหลี่ยมสีแดง (Tooltip) ที่เด้งขึ้นมาเวลาเลื่อน */
+    div[data-baseweb="tooltip"] {
+        display: none !important;
+    }
+
+    /* ปรับแต่งปุ่มวงกลม (Thumb) ให้เรียบร้อย */
+    .stSlider [role="slider"] {
+        background-color: #FF4B4B !important;
+        border: 2px solid #FFFFFF !important;
+        box-shadow: none !important;
+    }
+
+    /* บังคับตัวเลขที่หัว Slider และสเกลตัวเลขให้เป็นสีขาวชัดเจน */
     .stSlider [data-testid="stTickBarMax"], 
     .stSlider [data-testid="stTickBarMin"],
     .stSlider div[data-baseweb="typography"],
@@ -40,7 +54,7 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* 4. Metric พื้นขาว ตัวหนังสือดำ (ให้เด่น) */
+    /* 4. Metric พื้นขาว ตัวหนังสือดำ */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
@@ -51,7 +65,7 @@ st.markdown("""
         border: 1px solid #eeeeee;
     }
     
-    /* 5. ปุ่มสีน้ำเงิน */
+    /* 5. ปุ่มวิเคราะห์สีน้ำเงิน */
     .stButton>button {
         background-color: #007bff !important;
         color: white !important;
@@ -60,12 +74,12 @@ st.markdown("""
         border: none;
     }
 
-    /* 6. กล่อง Input (Container) */
+    /* 6. กล่อง Input Container */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background-color: #1A1C24 !important;
     }
 
-    /* 7. บังคับส่วน "คำแนะนำ" และกล่องสถานะให้เป็นตัวหนังสือสีดำ */
+    /* 7. บังคับตัวหนังสือในส่วนคำแนะนำให้ชัดเจน */
     .analysis-text h5, .analysis-text p, .analysis-text li {
         color: #000000 !important;
     }
@@ -190,7 +204,7 @@ with exp:
     c1, c2, c3 = st.columns(3)
     deg_fever = fuzz.interp_membership(temp_range, temp['fever'].mf, in_temp)
     deg_sleep_low = fuzz.interp_membership(sleep_range, sleep['low'].mf, in_sleep)
-    deg_stress_high = fuzz.interp_membership(stress_level.universe if 'stress_level' in locals() else stress_range, stress['high'].mf, in_stress)
+    deg_stress_high = fuzz.interp_membership(stress_range, stress['high'].mf, in_stress)
     
     c1.markdown(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
     c2.markdown(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
