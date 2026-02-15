@@ -9,38 +9,26 @@ st.set_page_config(page_title="AI Health Advisor Pro", layout="wide", page_icon=
 
 st.markdown("""
     <style>
-    /* บังคับพื้นหลังของแอปทั้งหมดให้เป็นสีมืด */
-    .stApp {
-        background-color: #0E1117 !important;
-    }
-
-    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาว (เพื่อให้เด่นชัด) */
+    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาวเสมอ */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
         background-color: #ffffff !important;
         padding: 20px;
         border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         border: 1px solid #eeeeee;
     }
     
-    /* บังคับสีตัวหนังสือหัวข้อทั้งหมดให้เป็นสีขาวนวล */
-    h1, h2, h3, h4, h5, p, span, label { 
-        color: #FAFAFA !important; 
-    }
-
-    /* ปรับแต่งปุ่มให้เป็นสีน้ำเงินเด่นชัด */
-    .stButton>button {
-        background-color: #007bff !important;
-        color: white !important;
-        border-radius: 10px;
-        width: 100%;
+    /* แก้ไขตรงนี้: ปรับสีหัวข้อให้เป็นสีขาว (หรือลบทิ้งเพื่อให้เปลี่ยนตาม Theme) */
+    h1, h2, h3, h4 { 
+        color: #FFFFFF !important; 
     }
     
-    /* แก้ไขสีตัวหนังสือใน Slider ให้เห็นชัดบนพื้นมืด */
-    .stSlider label {
-        color: #FAFAFA !important;
+    /* ปรับแต่งปุ่มให้ดูชัดขึ้น */
+    .stButton>button {
+        background-color: #007bff;
+        color: white;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -157,6 +145,4 @@ with exp:
     
     c1.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**</span>", unsafe_allow_html=True)
     c2.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**</span>", unsafe_allow_html=True)
-
     c3.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**</span>", unsafe_allow_html=True)
-
