@@ -19,44 +19,28 @@ st.markdown("""
         color: #FFFFFF !important; 
     }
 
-    /* 3. บังคับ Slider สีแดง + ลบกรอบสีแดงทุกชนิดออก */
-    /* บังคับสีของแถบ Slider */
+    /* 3. บังคับ Slider สีแดง + ตัวเลขขาว + ลบกรอบสีแดงเวลาคลิก */
     .stSlider [data-baseweb="slider"] > div > div > div > div {
         background-color: #FF4B4B !important;
     }
     .stSlider [data-baseweb="slider"] > div > div > div > div > div {
         background-color: #FF4B4B !important;
     }
-
-    /* 🔥 ส่วนสำคัญ: ล้างค่าตัวแปร CSS ที่ทำให้เกิดกรอบแดง/เงาแดงเวลาคลิก 🔥 */
-    div[data-testid="stSlider"] > div > div {
-        border: none !important;
+    /* ลบกรอบสีแดง (Focus Ring) ออก */
+    .stSlider [data-baseweb="slider"] > div:focus,
+    .stSlider [data-baseweb="slider"] [role="slider"]:focus {
         outline: none !important;
         box-shadow: none !important;
     }
-    
-    .stSlider [data-baseweb="slider"] > div {
-        outline: none !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    /* ปรับแต่งปุ่มเลื่อน (Thumb) ไม่ให้มีเงาแดงเวลาโดนกด */
-    .stSlider [role="slider"] {
-        background-color: #FF4B4B !important;
-        box-shadow: none !important;
-        border: 2px solid #FFFFFF !important;
-    }
-
-    /* บังคับตัวเลขที่หัว Slider และตัวเลขสเกล Min/Max ให้เป็นสีขาวชัดเจน */
+    /* บังคับตัวเลขที่หัว Slider และตัวเลขสเกล Min/Max ให้เป็นสีขาว */
     .stSlider [data-testid="stTickBarMax"], 
     .stSlider [data-testid="stTickBarMin"],
     .stSlider div[data-baseweb="typography"],
-    .stSlider div[style*="color: rgb(255, 75, 75)"] { /* ดึงตัวเลขสีแดงเดิมให้เป็นขาว */
+    .stSlider div {
         color: #FFFFFF !important;
     }
 
-    /* 4. Metric พื้นขาว ตัวหนังสือดำ */
+    /* 4. Metric พื้นขาว ตัวหนังสือดำ (ให้เด่น) */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
@@ -206,8 +190,7 @@ with exp:
     c1, c2, c3 = st.columns(3)
     deg_fever = fuzz.interp_membership(temp_range, temp['fever'].mf, in_temp)
     deg_sleep_low = fuzz.interp_membership(sleep_range, sleep['low'].mf, in_sleep)
-    # แก้ไขตัวแปร stress_level ให้ถูกตามที่นิยามไว้
-    deg_stress_high = fuzz.interp_membership(stress_range, stress['high'].mf, in_stress)
+    deg_stress_high = fuzz.interp_membership(stress_level.universe if 'stress_level' in locals() else stress_range, stress['high'].mf, in_stress)
     
     c1.markdown(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
     c2.markdown(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
