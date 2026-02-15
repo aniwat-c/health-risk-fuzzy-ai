@@ -9,64 +9,26 @@ st.set_page_config(page_title="AI Health Advisor Pro", layout="wide", page_icon=
 
 st.markdown("""
     <style>
-    /* 1. บังคับพื้นหลังของแอปทั้งหมดให้เป็นสีดำ (Dark Mode ถาวร) */
-    .stApp {
-        background-color: #0E1117 !important;
-    }
-
-    /* 2. บังคับหัวข้อและข้อความทั่วไปให้เป็นสีขาว */
-    h1, h2, h3, h4, h5, label, span { 
-        color: #FFFFFF !important; 
-    }
-
-    /* 3. บังคับแถบเลื่อน (Slider) ให้เป็นสีแดงสด และตัวเลขสเกลให้เป็นสีขาว */
-    .stSlider [data-baseweb="slider"] > div > div > div > div {
-        background-color: #FF4B4B !important;
-    }
-    .stSlider [data-baseweb="slider"] > div > div > div > div > div {
-        background-color: #FF4B4B !important;
-    }
-    .stSlider [data-testid="stTickBarMax"], 
-    .stSlider [data-testid="stTickBarMin"],
-    .stSlider [style*="color"] {
-        color: #FFFFFF !important;
-        opacity: 1 !important;
-    }
-
-    /* 4. สไตล์ Metric: พื้นขาว ตัวหนังสือดำเสมอ */
+    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาวเสมอ */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
         background-color: #ffffff !important;
         padding: 20px;
         border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         border: 1px solid #eeeeee;
     }
     
-    /* 5. สไตล์ปุ่ม: สีน้ำเงิน */
-    .stButton>button {
-        background-color: #007bff !important;
-        color: white !important;
-        border-radius: 10px;
-        width: 100%;
-        border: none;
-    }
-
-    /* 6. ปรับสีพื้นหลังของกล่องใส่ข้อมูล (Slider Container) */
-    div[data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #1A1C24 !important;
-    }
-
-    /* 7. *** ส่วนที่แก้ไข: บังคับข้อความคำแนะนำผลการวิเคราะห์ให้เป็นสีดำ *** */
-    /* ครอบคลุมส่วน st.write และ st.markdown ที่อยู่ในฝั่งแสดงผล */
-    .stAlert p, .stMarkdown p, li {
-        color: #000000 !important;
+    /* แก้ไขตรงนี้: ปรับสีหัวข้อให้เป็นสีขาว (หรือลบทิ้งเพื่อให้เปลี่ยนตาม Theme) */
+    h1, h2, h3, h4 { 
+        color: #FFFFFF !important; 
     }
     
-    /* บังคับสีใน Expander ให้กลับเป็นสีขาวเพื่อให้ยังอ่านออกบนพื้นเข้ม */
-    .stExpander p, .stExpander span {
-        color: #FFFFFF !important;
+    /* ปรับแต่งปุ่มให้ดูชัดขึ้น */
+    .stButton>button {
+        background-color: #007bff;
+        color: white;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -184,5 +146,3 @@ with exp:
     c1.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**</span>", unsafe_allow_html=True)
     c2.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**</span>", unsafe_allow_html=True)
     c3.markdown(f"<span style='color:black'>ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**</span>", unsafe_allow_html=True)
-
-
