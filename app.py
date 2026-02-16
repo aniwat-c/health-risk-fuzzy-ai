@@ -4,87 +4,38 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 import matplotlib.pyplot as plt
 
-# --- 1. การตั้งค่าหน้าเว็บและสไตล์ CSS แบบ Dark Mode ถาวร ---
+# --- 1. การตั้งค่าหน้าเว็บและสไตล์ CSS ---
 st.set_page_config(page_title="AI Health Advisor Pro", layout="wide", page_icon="🏥")
 
 st.markdown("""
     <style>
-    /* 1. บังคับพื้นหลังแอปดำถาวร */
-    .stApp {
-        background-color: #0E1117 !important;
-    }
-
-    /* 2. หัวข้อหลักและ Label ทั่วไปเป็นสีขาว */
-    h1, h2, h3, h4, label, span { 
-        color: #FFFFFF !important; 
-    }
-
-    /* 3. จัดการ Slider (ลบกรอบสีแดงและติ่ง Tooltip ออกทั้งหมด) */
-    
-    /* บังคับสีของแถบ Slider หลัก */
-    .stSlider [data-baseweb="slider"] > div > div > div > div {
-        background-color: #FF4B4B !important;
-    }
-
-    /* ลบกรอบสีแดง (Focus Ring) และเงาเวลาคลิกหรือเลื่อน */
-    .stSlider [data-baseweb="slider"] > div:focus,
-    .stSlider [role="slider"]:focus,
-    .stSlider [role="slider"]:active {
-        outline: none !important;
-        box-shadow: none !important;
-    }
-
-    /* ซ่อนติ่งสี่เหลี่ยมสีแดง (Tooltip) ที่เด้งขึ้นมาเวลาเลื่อน */
-    div[data-baseweb="tooltip"] {
-        display: none !important;
-    }
-
-    /* ปรับแต่งปุ่มวงกลม (Thumb) ให้เรียบร้อย */
-    .stSlider [role="slider"] {
-        background-color: #FF4B4B !important;
-        border: 2px solid #FFFFFF !important;
-        box-shadow: none !important;
-    }
-
-    /* บังคับตัวเลขที่หัว Slider และสเกลตัวเลขให้เป็นสีขาวชัดเจน */
-    .stSlider [data-testid="stTickBarMax"], 
-    .stSlider [data-testid="stTickBarMin"],
-    .stSlider div[data-baseweb="typography"],
-    .stSlider div {
-        color: #FFFFFF !important;
-    }
-
-    /* 4. Metric พื้นขาว ตัวหนังสือดำ */
+    /* บังคับเฉพาะ Metric ให้เป็นสีดำบนพื้นขาวเสมอ */
     [data-testid="stMetricValue"] { color: #000000 !important; }
     [data-testid="stMetricLabel"] { color: #000000 !important; }
     .stMetric {
         background-color: #ffffff !important;
         padding: 20px;
         border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         border: 1px solid #eeeeee;
     }
     
-    /* 5. ปุ่มวิเคราะห์สีน้ำเงิน */
+    h1, h2, h3, h4 { color: #FFFFFF !important; }
+    
     .stButton>button {
-        background-color: #007bff !important;
-        color: white !important;
-        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
         width: 100%;
-        border: none;
+        border-radius: 10px;
     }
 
-    /* 6. กล่อง Input Container */
-    div[data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #1A1C24 !important;
-    }
-
-    /* 7. บังคับตัวหนังสือในส่วนคำแนะนำให้ชัดเจน */
-    .analysis-text h5, .analysis-text p, .analysis-text li {
-        color: #000000 !important;
-    }
-    div[data-testid="stNotification"] p {
-        color: #000000 !important;
+    /* สไตล์สำหรับกล่องข้อความอธิบายข้อมูลส่วนบุคคล */
+    .personal-info {
+        background-color: #1A1C24;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        border-left: 5px solid #007bff;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -127,15 +78,37 @@ st.divider()
 col_input, col_display = st.columns([1, 2], gap="large")
 
 with col_input:
+    # --- ส่วนที่เพิ่มใหม่: ข้อมูลส่วนบุคคล ---
+    st.subheader("👤 ข้อมูลทั่วไป")
+    with st.container(border=True):
+        c_sex, c_age = st.columns(2)
+        in_sex = c_sex.selectbox("เพศ", ["ชาย", "หญิง", "ไม่ระบุ"])
+        in_age = c_age.number_input("อายุ (ปี)", min_value=1, max_value=120, value=25)
+        
+        c_weight, c_height = st.columns(2)
+        in_weight = c_weight.number_input("น้ำหนัก (กก.)", min_value=1.0, value=60.0)
+        in_height = c_height.number_input("ส่วนสูง (ซม.)", min_value=50.0, value=170.0)
+        
+        # คำนวณ BMI เบื้องต้น
+        bmi = in_weight / ((in_height/100)**2)
+    
     st.subheader("📋 ระบุข้อมูลตัวบ่งชี้")
     with st.container(border=True):
         in_temp = st.slider("🌡️ อุณหภูมิร่างกาย (°C)", 35.0, 42.0, 37.0, step=0.1)
         in_sleep = st.select_slider("😴 ชั่วโมงการนอนต่อวัน", options=range(13), value=7)
         in_stress = st.select_slider("🤯 ระดับความเครียด (0-10)", options=range(11), value=3)
+    
     btn_calc = st.button("🚀 วิเคราะห์ผลลัพธ์")
 
 with col_display:
     if btn_calc:
+        # แสดงข้อมูลส่วนบุคคลที่สรุปแล้ว
+        st.markdown(f"""
+        <div class='personal-info'>
+            <b>สรุปข้อมูลส่วนบุคคล:</b> เพศ {in_sex} | อายุ {in_age} ปี | BMI: {bmi:.1f}
+        </div>
+        """, unsafe_allow_html=True)
+
         health_sim.input['temperature'] = in_temp
         health_sim.input['sleep_hours'] = in_sleep
         health_sim.input['stress_level'] = in_stress
@@ -150,49 +123,29 @@ with col_display:
             m1.metric("ความเสี่ยงโดยรวม", f"{res_risk:.2f}%")
             m2.metric("สถานะสุขภาพ", status)
 
-            st.markdown("<div class='analysis-text'>", unsafe_allow_html=True)
-            st.write("##### **คำแนะนำจากระบบ:**") 
-            
+            st.write("##### **คำแนะนำจากระบบ:**")
             if res_risk > 70:
                 st.error("🚨 **สถานะ: อันตราย**")
-                st.markdown("* ดื่มน้ำมากๆ และทานยาลดไข้\n* ควรพักผ่อนให้เพียงพอ\n* **โปรดพบแพทย์ทันที**")
+                st.markdown("* ดื่มน้ำมากๆ และทานยาลดไข้\n* ควรหาเวลางีบพักผ่อนให้เพียงพอ\n* **โปรดพบแพทย์ทันที** หากอาการไม่ดีขึ้น")
             elif res_risk > 40:
                 st.warning("⚠️ **สถานะ: ควรระวัง**")
-                st.markdown("* ควรลดภาระงาน\n* พยายามนอนหลับให้ครบ 7-8 ชั่วโมง")
+                st.markdown("* ควรลดภาระงานเพื่อลดความเครียดสะสม\n* พยายามนอนหลับให้ครบ 7-8 ชั่วโมง\n* สังเกตอาการอย่างใกล้ชิด")
             else:
                 st.success("✅ **สถานะ: ปลอดภัย**")
-                st.markdown("* รักษาสุขภาพที่ดีต่อไป\n* ออกกำลังกายอย่างสม่ำเสมอ")
-            
-            st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown("* รักษาสุขภาพและพฤติกรรมที่ดีต่อไป\n* ออกกำลังกายอย่างสม่ำเสมอ")
 
-            # --- กราฟสรุปผล ---
+            # กราฟ
             st.write("#### 📉 กราฟสรุปผล (Inference Visualization)")
-            fig, ax = plt.subplots(figsize=(10, 4))
-            fig.patch.set_facecolor('white')
-            ax.set_facecolor('white')
-            
-            ax.tick_params(colors='black')
-            ax.xaxis.label.set_color('black')
-            ax.yaxis.label.set_color('black')
-            for spine in ax.spines.values():
-                spine.set_edgecolor('black')
-
-            ax.plot(risk_range, risk['low'].mf, 'g', linewidth=2, label='Low Risk')
-            ax.plot(risk_range, risk['medium'].mf, 'orange', linewidth=2, label='Medium Risk')
-            ax.plot(risk_range, risk['high'].mf, 'r', linewidth=2, label='High Risk')
-            
-            ax.axvline(x=res_risk, color='blue', linestyle='--', linewidth=2.5, label=f'Result ({res_risk:.1f}%)')
-            
-            ax.set_title("Health Risk Level", color='black', fontsize=14)
-            ax.set_xlabel("Risk Percentage (%)", color='black')
-            ax.set_ylabel("Membership Degree", color='black')
-            ax.legend(loc='upper right', facecolor='white', edgecolor='black')
-            ax.grid(True, linestyle=':', alpha=0.6)
-            
+            fig, ax = plt.subplots(figsize=(10, 3.5))
+            ax.plot(risk_range, risk['low'].mf, 'g', label='Low')
+            ax.plot(risk_range, risk['medium'].mf, 'y', label='Medium')
+            ax.plot(risk_range, risk['high'].mf, 'r', label='High')
+            ax.axvline(x=res_risk, color='blue', linestyle='--', linewidth=2, label=f'Result ({res_risk:.1f}%)')
+            ax.legend()
             st.pyplot(fig)
 
         except Exception as e:
-            st.error("ไม่สามารถคำนวณได้")
+            st.error("ไม่สามารถคำนวณได้: ข้อมูลไม่เข้าเงื่อนไขของกฎ")
     else:
         st.info("กรุณาป้อนข้อมูลเพื่อเริ่มการวิเคราะห์")
 
@@ -206,6 +159,6 @@ with exp:
     deg_sleep_low = fuzz.interp_membership(sleep_range, sleep['low'].mf, in_sleep)
     deg_stress_high = fuzz.interp_membership(stress_range, stress['high'].mf, in_stress)
     
-    c1.markdown(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
-    c2.markdown(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
-    c3.markdown(f"ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**")
+    c1.write(f"ความเป็นสมาชิก 'ไข้': **{deg_fever:.2f}**")
+    c2.write(f"ความเป็นสมาชิก 'นอนน้อย': **{deg_sleep_low:.2f}**")
+    c3.write(f"ความเป็นสมาชิก 'เครียดสูง': **{deg_stress_high:.2f}**")
